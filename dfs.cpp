@@ -6,9 +6,9 @@ using namespace std;
  typedef vector<long long int> vlli;
  typedef vector<vi> vvi;
  typedef pair<int,int> ii;
- #define all(c) (c).begin(),(c).end()
- #define tr(container, it)  for(decltype((container).begin()) it = container.begin(); it != container.end(); it++)
- #define size 10000
+
+ #define tr(container, it)  for(typeof((container).begin()) it = container.begin(); it != container.end(); it++)
+ #define size_max 10000
 
 
 
@@ -30,15 +30,47 @@ public: bool operator()(vertex v1,vertex v2)
 
  class Graph{
    public:  int n;
-            vector< list<int> > adj= vector< list<int> > (size);
+            vector< list<int> > adj= vector< list<int> > (size_max);
             void addedge(int u,int v);                     //for undirected use addedge(u,v,w) and addedge(v,u,w)
             Graph(int x) {n=x;}
 };
 
+
+void bfs(Graph G,int s)
+{
+    int n=G.n;
+    int parent[n],level[n];
+    bool visited[n];
+    for(int i=0;i<n;i++)
+    {
+        visited[i]=false;
+        parent[i]=i;
+    }
+
+    queue<int> Q;
+    parent[s]=-1;
+    level[s]=0;
+    Q.push(s);
+    while(Q.size())
+    {
+        int u=Q.front();
+        Q.pop();
+        visited[u]=true;
+        list<int> ::iterator it;
+        for(it=G.adj[u].begin();it!=G.adj[u].end();it++)
+        {
+            Q.push(*it);
+            level[*it]=level[u]+1;
+            parent[*it]=u;
+        }
+    }
+    for(int i=0;i<n;i++)
+        cout<<i<<" parent "<<parent[i]<<" level "<<level[i]<<endl;
+}
 void Graph::addedge(int u,int v)
 {
     adj[u].push_back(v);
-   //adj[v].push_back(u);                           //remove " // " for undirected
+    //adj[v].push_back(u);                           //remove " // " for undirected
 }
 void edgevisit(Graph G,int u,bool visited[],int start[],int end[],int parent[],col color[])
 {   visited[u]=true;
@@ -127,11 +159,12 @@ void dfs(Graph G)
     for (int u=0;u<G.n;u++ )
         cout<<u<<" "<<start[u]<<" "<<end[u]<<" "<<parent[u]<<endl;
 
-    tr(topolist,it)
+    tr(topolist,it)       //topo printinga
     {
-        cout<<(*it)<<"->";
+        cout<<(*it)<<" ";
     }
     cout<<endl;
+
     edge(G,start,end,parent);     //function call for edge classification
 }
   void printcycle(int v,int u,int parent[])
@@ -211,7 +244,11 @@ int main()
         cin>>u>>v;
         G.addedge(u,v);
     }
-    dfs(G);
-    hascycle(G);
+    cout<<"s"<<endl;
+    int s;
+    cin>>s;
+    bfs(G,s);
+    //dfs(G);
+    //hascycle(G);
     return 0;
 }
